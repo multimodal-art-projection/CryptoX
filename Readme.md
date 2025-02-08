@@ -4,7 +4,7 @@
 
 <p align="center">
   <a href="https://arxiv.org" style="margin: 0 10px;">📃 ArXiv</a> |
-  <a href="https://github.com/weimo3221/CryptoX/" style="margin: 0 10px;">🏠 GitHub</a>
+  <a href="https://github.com/multimodal-art-projection/CryptoX/" style="margin: 0 10px;">🏠 GitHub</a>
 </p>
 
 
