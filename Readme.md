@@ -3,6 +3,7 @@
 </p>
 
 <p align="center">
+  <a href="https://razor233.github.io/CryptoX/" style="margin: 0 10px;">🏆 LeaderBoard</a> |
   <a href="https://arxiv.org/abs/2502.07813" style="margin: 0 10px;">📃 ArXiv</a> |
   <a href="https://github.com/multimodal-art-projection/CryptoX/" style="margin: 0 10px;">🏠 GitHub</a>
 </p>
@@ -141,6 +142,13 @@ Use the model name(-m) and model path(-p),refer to analysis/stage_analysis/run.b
 
 **BibTeX:**
 ```bibtex
-@misc{
+@misc{shi2025cryptoxcompositionalreasoning,
+      title={CryptoX : Compositional Reasoning Evaluation of Large Language Models}, 
+      author={Jiajun Shi and Chaoren Wei and Liqun Yang and Zekun Moore Wang and Chenghao Yang and Ge Zhang and Stephen Huang and Tao Peng and Jian Yang and Zhoufutu Wen},
+      year={2025},
+      eprint={2502.07813},
+      archivePrefix={arXiv},
+      primaryClass={cs.CR},
+      url={https://arxiv.org/abs/2502.07813}, 
 }
 ```
