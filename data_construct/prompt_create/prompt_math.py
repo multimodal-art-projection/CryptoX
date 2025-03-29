@@ -1,5 +1,7 @@
 # data_construct/prompt_create/prompt_math.py
-# prompt中的部件
+# Python Standard Library
+import copy
+# Components in prompt
 guide_nocode = """You are a good math problem-solver, I'll give you a question.\nYour task is:\n- First, answer the question.\n- Second, output the answer in the required format. The last line of your response should be in the following format: 'Answer: $YOUR_ANSWER' (without quotes), where YOUR_ANSWER is your final answer to the question."""
 
 guide_code = """You are a good math problem-solver, I'll give you a code dictionary and a encoded question based on that dictionary.\nYour task is:\n- First, use the code dictionary to decode the encoded question.\n- Second, answer the decoded question.\n- Third, output the answer in the required format. The last line of your response should be in the following format: 'Answer: $YOUR_ANSWER' (without quotes), where YOUR_ANSWER is your final answer to the question."""
@@ -62,7 +64,7 @@ decode_template = """I'll give you a code dictionary and a encoded question base
 
 def encode_w(w, dic):
     """
-    对一个单词进行编码
+    Encoding a word
     """
     res = []
     ori = []
@@ -78,7 +80,7 @@ def encode_w(w, dic):
 
 def encode_text_special(text, e_words, dic, options, solution, answer):
     """
-    对一个问题进行编码并构造一个shot
+    Encoding a question and constructing a shot
     """
     output_text = ""
     w_list = []
@@ -121,7 +123,7 @@ def encode_text_special(text, e_words, dic, options, solution, answer):
 
 def text_special(text, options, solution, answer):
     """
-    构造单个shot
+    Constructing a single shot
     """
     output_text = ""
     output_text += "[question]\n"
@@ -133,7 +135,7 @@ def text_special(text, options, solution, answer):
 
 def common(example_num, code_if, dic):
     """
-    主代码，构造主实验的prompt
+    The main code, which constructs the prompt for the main experiment
     """
     output_text = ""
     if code_if:
@@ -151,7 +153,7 @@ def common(example_num, code_if, dic):
             break
         output_text += f"### Example {idx+1}:\n"
         if code_if:
-            output_text += encode_text_special(item["text"], item["en_words"], dic, item["options"], item["solution"], item["answer"])
+            output_text += encode_text_special(item["text"], copy.deepcopy(item["en_words"]), dic, item["options"], item["solution"], item["answer"])
         else:
             output_text += text_special(item["text"], item["options"], item["solution"], item["answer"])
     output_text += f"{end}\n"
@@ -160,7 +162,7 @@ def common(example_num, code_if, dic):
 
 def simple_text_special(code_if, text, options, solution, answer, e_words, dic):
     """
-    选取一个问题构建一个简单的shot
+    Pick a question to construct a simple shot
     """
     output_text = ""
     if not code_if:
@@ -206,14 +208,14 @@ def simple_text_special(code_if, text, options, solution, answer, e_words, dic):
 
 def simple_common(example_num, code_if, dic):
     """
-    主代码块，用于构造主实验较简单的prompt
+    The main code block, used to construct the simpler prompt for the main experiment
     """
     example_text = ""
     for idx, item in enumerate(examples):
         if idx == example_num:
             break
         example_text += f"### Example {idx+1}:\n"
-        example_text += simple_text_special(code_if, item["text"], item["options"], item["solution"], item["answer"], item["en_words"], dic)
+        example_text += simple_text_special(code_if, item["text"], item["options"], item["solution"], item["answer"], copy.deepcopy(item["en_words"]), dic)
     if example_num > 0:
         example_text = f"I will give you {example_num} example(s), please give me answer based on the example(s):\n" + example_text
         example_text += "\n"
@@ -226,7 +228,7 @@ def simple_common(example_num, code_if, dic):
 
 def decode_text_special(text, e_words, dic):
     """
-    选取一个问题构建一个简单用于测试decode的shot
+    Pick a question to build a shot that is simply used to test decode
     """
     output_text = ""
     w_list = []
@@ -266,14 +268,14 @@ def decode_text_special(text, e_words, dic):
 
 def decode_common(example_num, dic):
     """
-    主代码块，用于构造测decode实验的prompt
+    The main block of code that constructs the prompt for the decode experiment.
     """
     example_text = ""
     for idx, item in enumerate(examples):
         if idx == example_num:
             break
         example_text += f"### Example {idx+1}:\n"
-        example_text += decode_text_special(item["text"], item["en_words"], dic)
+        example_text += decode_text_special(item["text"], copy.deepcopy(item["en_words"]), dic)
     if example_num > 0:
         example_text = f"I will give you {example_num} example(s), please give me answer based on the example(s):\n" + example_text
         example_text += "\n"

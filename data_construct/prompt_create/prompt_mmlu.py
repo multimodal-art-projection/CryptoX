@@ -1,5 +1,7 @@
 # data_construct/prompt_create/prompt_mmlu.py
-# prompt中的部件
+# Python Standard Library
+import copy
+# Components in prompt
 answer_range = {"digit": "where YOUR_ANSWER is one of 1234", "alpha": "where YOUR_ANSWER is one of ABCD", "final": "where YOUR_ANSWER consists of 2 letter or number"}
 
 guide_nocode = """You are a good problem-solver, I'll give you a question and a answer conversion rule.\nYour task is:\n- First, answer the question using a answer conversion rule.\n- Second, output the answer in the required format. The last line of your response should be in the following format: 'Answer: $YOUR_ANSWER' (without quotes), where YOUR_ANSWER is one of {answer_range}.\n"""
@@ -109,7 +111,7 @@ cr_simple_template = """Please answer the decoded question above with the option
 
 def encode_w(w, dic):
     """
-    对单个单词进行编码
+    Encoding of individual words
     """
     res = []
     ori = []
@@ -125,7 +127,7 @@ def encode_w(w, dic):
 
 def encode_text_special(text, e_words, dic, options, solution, answer):
     """
-    对单个问题进行编码，然后生成一个shot
+    Encoding individual questions and then generating a shot
     """
     output_text = ""
     w_list = []
@@ -169,7 +171,7 @@ def encode_text_special(text, e_words, dic, options, solution, answer):
 
 def text_special(text, options, solution, answer):
     """
-    构造单个shot
+    Constructing a single shot
     """
     output_text = ""
     output_text += "[question]\n"
@@ -181,7 +183,7 @@ def text_special(text, options, solution, answer):
 
 def change_answer(answer, hopnum):
     """
-    根据不同的hop修改答案
+    Revise the answer according to the different hop
     """
     if hopnum == 1:
         return answer
@@ -195,7 +197,7 @@ def change_answer(answer, hopnum):
     
 def change_solution(sollution, answer, hopnum):
     """
-    根据不同的hop修改solution
+    Modify the solution according to the different hop
     """
     if hopnum == 1:
         return sollution
@@ -212,7 +214,7 @@ def change_solution(sollution, answer, hopnum):
 
 def collect_rule(g_list):
     """
-    构造task_rule
+    Construct task_rule
     """
     length = len(g_list)
     num_dic = {1: "First", 2: "Second", 3: "Third", 4: "Fourth", 5: "Fifth", 6: "Sixth"}
@@ -224,7 +226,7 @@ def collect_rule(g_list):
 
 def common(example_num, code_if, dic, hop_num = 1):
     """
-    主代码，构造主实验用的prompt
+    The main code, which constructs the prompt for the main experiment
     """
     output_text = ""
     guide_list = []
@@ -262,7 +264,7 @@ def common(example_num, code_if, dic, hop_num = 1):
             break
         output_text += f"### Example {idx+1}:\n"
         if code_if:
-            output_text += encode_text_special(item["text"], item["en_words"], dic, item["options"], item[f"solution{hop_num}"], item[f"answer{hop_num}"])
+            output_text += encode_text_special(item["text"], copy.deepcopy(item["en_words"]), dic, item["options"], item[f"solution{hop_num}"], item[f"answer{hop_num}"])
         else:
             output_text += text_special(item["text"], item["options"], item[f"solution{hop_num}"], item[f"answer{hop_num}"])
     output_text += f"{end}\n"
@@ -271,7 +273,7 @@ def common(example_num, code_if, dic, hop_num = 1):
 
 def simple_text_special(code_if, text, options, solution, answer, e_words, dic):
     """
-    选取一个问题构建一个简单的shot
+    Pick a question to construct a simple shot
     """
     output_text = ""
     if not code_if:
@@ -317,14 +319,14 @@ def simple_text_special(code_if, text, options, solution, answer, e_words, dic):
 
 def simple_common(example_num, code_if, dic, hop_num = 1):
     """
-    主代码块，用于构造主实验较简单的prompt
+    The main code block, used to construct the simpler prompt for the main experiment
     """
     example_text = ""
     for idx, item in enumerate(examples):
         if idx == example_num:
             break
         example_text += f"### Example {idx+1}:\n"
-        example_text += simple_text_special(code_if, item["text"], item["options"], item[f"solution{hop_num}"], item[f"answer{hop_num}"], item["en_words"], dic)
+        example_text += simple_text_special(code_if, item["text"], item["options"], item[f"solution{hop_num}"], item[f"answer{hop_num}"], copy.deepcopy(item["en_words"]), dic)
     if hop_num == 1:
         ar = answer_range["alpha"]
         step = ""
@@ -346,7 +348,7 @@ def simple_common(example_num, code_if, dic, hop_num = 1):
 
 def decode_text_special(text, e_words, dic):
     """
-    选取一个问题构建一个简单用于测试decode的shot
+    Pick a question to build a shot that is simply used to test decode
     """
     output_text = ""
     w_list = []
@@ -386,14 +388,14 @@ def decode_text_special(text, e_words, dic):
 
 def decode_common(example_num, dic):
     """
-    主代码块，用于构造测decode实验的prompt
+    The main block of code that constructs the prompt for the decode experiment.
     """
     example_text = ""
     for idx, item in enumerate(examples):
         if idx == example_num:
             break
         example_text += f"### Example {idx+1}:\n"
-        example_text += decode_text_special(item["text"], item["en_words"], dic)
+        example_text += decode_text_special(item["text"], copy.deepcopy(item["en_words"]), dic)
     if example_num > 0:
         example_text = f"I will give you {example_num} example(s), please give me answer based on the example(s):\n" + example_text
         example_text += "\n"
@@ -403,7 +405,7 @@ def decode_common(example_num, dic):
 
 def cr_simple(dic, hop_num=1):
     """
-    主代码块，用于构造cr实验的prompt
+    Main code block for constructing the prompt for cr experiments
     """
     output_text = list()
     if hop_num == 1:

@@ -1,5 +1,5 @@
 # data_construct/prompt_create/prompt_needle.py
-# 用于needle的prompt
+# Prompt for needle
 needle_0shot_template = """Please follow the context given above, answer the following question.
 The last line of your response should be of the following format: 'Answer: $YOUR_ANSWER' (without quotes) where YOUR_ANSWER is your final answer of the question and it must be a few words.
 
